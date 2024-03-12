@@ -3,20 +3,20 @@ package regex.tokens;
 public class Constant {
   private static int serial = 600;
   private int id;
-  private int numero;
+  private int number;
   private String constants;
-  private int tipo;
+  private int type;
   private int column;
 
   public String toString() {
-    return id + " "+ numero + " " + constants + " " + tipo + "," + column;
+    return  number + " "+ id + " " + constants + " " + type + "," + column;
   }
 
-  public Constant(int numero, String constants, int tipo, int column) {
+  public Constant(int number, String constants, int type, int column) {
     this.id = serial++;
-    this.numero = numero;
+    this.number = number;
     this.constants = constants;
-    this.tipo = tipo;
+    this.type = type;
     this.column = column;
   }
 }
