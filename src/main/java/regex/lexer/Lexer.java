@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import regex.helpers.HelpersFunctions;
+import regex.tokens.Identifier;
 
 public class Lexer {
 

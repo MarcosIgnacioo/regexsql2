@@ -10,18 +10,46 @@ import regex.tokens.Identifier;
 
 public class Main {
   public static void main(String[] args) {
-    Identifier id = new Identifier("asdf", 1, 1);
-    Identifier id2 = new Identifier("asdf", 1, 1);
-    Identifier id3 = new Identifier("asdf", 1, 1);
-    System.out.println(id);
-    System.out.println(id2);
-    System.out.println(id3);
-
-    String txt = "SELECT";
+    String txt = "SELECT ANOMBRE, CALIFICACION , TURNO\n" +
+        "FROM ALUMNOS, INSCRITOS, MATERIAS, CARRERAS\n" +
+        "WHERE MNOMBRE=’LENAUT2’ AND TURNO = ‘TM’\n" +
+        "AND CNOMBRE=’ISC’ AND SEMESTRE=’2023I’ AND CALIFICACION >= 70\n" +
+        "\n" +
+        "SELECT *\n" +
+        "FROM PROFESORES\n" +
+        "WHERE EDAD >45 AND GRADO='MAE' OR GRADO='DOC'\n" +
+        "\n" +
+        "SELECT ANOMBRE\n" +
+        "FROM ALUMNOS,INSCRITOS,CARRERAS\n" +
+        "WHERE ALUMNOS.A#=INSCRITOS.A# AND ALUMNOS.C#=CARRERAS.C<#\n" +
+        "AND INSCRITOS.SEMESTRE='2010I'\n" +
+        "AND CARRERAS.CNOMBRE='ISC'\n" +
+        "AND ALUMNOS.GENERACION='2010'\n" +
+        "\n" +
+        "SELECT ANOMBRE\n" +
+        "FROM ALUMNOS A,INSCRITOS I,CARRERAS C\n" +
+        "WHERE A.A#=I.A# AND A.C#=C.C# AND I.SEMESTRE='2010I'\n" +
+        "AND C.CNOMBRE='ISC' AND A.GENERACION='2010'\n" +
+        "\n" +
+        "SELECT MNOMBRE, CNOMBRE\n" +
+        "FROM CARRERAS C,DEPARTAMENTOS D,MATERIAS M\n" +
+        "WHERE C.C#=M.C# AND C.D#=D.D# AND D.DNOMBRE='CIECOM'\n" +
+        "\n" +
+        "SELECT M#,MNOMBRE\n" +
+        "FROM MATERIAS\n" +
+        "WHERE M# IN (SELECT M#\n" +
+        "FROM INSCRITOS\n" +
+        "WHERE A# IN (SELECT A#\n" +
+        "FROM ALUMNOS\n" +
+        "WHERE ANOMBRE='MESSI@ LIONEL'))\n" +
+        "\n" +
+        "SELECT ANOMBRE, CALIFICACION, TURNO\n" +
+        "FROM ALUMNOS, INSCRITOS, MATERIAS, CARRERAS\n" +
+        "WHERE MNOMBRE=’LENAUT2’ AND TURNO = ‘TM’\n" +
+        "AND CNOMBRE=’ISC’ AND SEMESTRE=’%@!$2$#\\()%02-_3?{}[]I’ AND CALIFICACION >= 70\n";
     String regex = "(‘|’|') ?[a-zA-Z@!\\$\\%#\\\\\\(\\)_\\-0-9\\[\\]\\{\\} ?]*(’|'|‘)|\\b\\w+\\b|(,|.)";
 
     String[] words = GetFiltereWords(regex, txt);
-
     String[] categoriesArray = Lexer.MatchWordArrayType(words);
     printArray(categoriesArray);
   }
