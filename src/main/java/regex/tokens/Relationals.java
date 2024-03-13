@@ -1,16 +1,43 @@
 package regex.tokens;
 
 public class Relationals {
-    private static int serial = 80;
-    private int id = 0;
-    private String relational;
+  private static int serial = 81;
+  private int id = 0;
+  public String relational;
+  public int number;
+  public int tokenType = 8;
+  public int line;
+  private int value;
 
-    public String toString() {
-        return "RELATIONAL: " + id + " " +  relational;
+  public void setValue(String relational) {
+    switch (relational) {
+      case "<":
+        value = 81;
+        break;
+      case ">":
+        value = 82;
+        break;
+      case "=":
+        value = 83;
+        break;
+      case ">=":
+        value = 84;
+        break;
+      case "<=":
+        value = 85;
+        break;
     }
+  }
 
-    public Relationals(String relational){
-        this.id = serial++;
-        this.relational = relational;
-    }
+  public String toString() {
+    return number + " | " + line + " | " + relational + " | " + tokenType + " | " + value;
+  }
+
+  public Relationals(String relational, int number, int line) {
+    this.id = serial++;
+    this.number = number;
+    this.relational = relational;
+    this.line = line;
+    setValue(relational);
+  }
 }

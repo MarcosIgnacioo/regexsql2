@@ -1,23 +1,43 @@
 package regex.tokens;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class Constant {
-  private static int serial = 600;
-  private static int numberCounter = 0;
-  private int id;
-  private int number;
-  private String constants;
-  private int type;
-  private int column;
+  public static int serial = 600;
+  public int id;
+  public int number;
+  public String constants;
+  public int type;
+  public int tokenType = 6;
+  public String line;
 
   public String toString() {
-    return "CONSTANTE: " + number + " " + id + " " + constants + " " + type + "," + column;
+    return number + " | " + line + " | " + constants + " | " + tokenType + " | " + id;
   }
 
-  public Constant(String constants, int type, int column) {
+  public String tableFormat() {
+    return number + " | " + constants + " | " + type + " | " + id;
+  }
+
+  public Constant(String constants, int number, String line) {
     this.id = serial++;
-    this.number = numberCounter++;
     this.constants = constants;
-    this.type = type;
-    this.column = column;
+    this.number = number;
+    this.line = line;
+    generateType();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    Constant that = (Constant) o;
+    return that.constants.equals(this.constants);
+  }
+
+  public void generateType() {
+    String regex = "\\d+";
+    Pattern pattern = Pattern.compile(regex);
+    Matcher matcher = pattern.matcher(constants);
+    type = (matcher.matches()) ? 61 : 62;
   }
 }

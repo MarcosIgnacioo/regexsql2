@@ -2,21 +2,26 @@ package regex.tokens;
 
 public class Identifier {
 
-  private static int serial = 400;
-  private int id;
-  private String identifier;
-  private int line;
-  private int column;
+  public static int serial = 401;
+  public int id;
+  public String identifier;
+  public String line;
+  public int number;
+  public int tokenType = 4;
 
   public String toString() {
-    return "IDENTIFIER " + id + " " + identifier + " " + line + "," + column;
+    return number + " | " + line.charAt(0) + " | " + " | " + identifier + " | " + tokenType + " | " + id + " | ";
   }
 
-  public Identifier(String identifier, int line, int column) {
-    this.id = serial;
+  public String tableFormat() {
+    return identifier + " | " + id + " | " + line;
+  }
+
+  public Identifier(String identifier, String line, int number) {
+    this.id = serial++;
     this.identifier = identifier;
+    this.number = number;
     this.line = line;
-    this.column = column;
   }
 
   @Override

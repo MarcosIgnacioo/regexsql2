@@ -12,12 +12,25 @@ import regex.tokens.Constant;
 import regex.tokens.Delimiters;
 import regex.tokens.Operators;
 import regex.tokens.Relationals;
+import regex.tokens.Illegal;
 
 public class Lexer {
   private final static String KEYWORD = "KEYWORD";
   private final static String OPERATOR = "OPERATOR";
   private final static String DELIMITER = "DELIMITER";
   private final static String RELATIONAL = "RELATIONAL";
+  private static int wordNumber = 1;
+
+  public static ArrayList<String> categoryArrayList = new ArrayList<>();
+  public static ArrayList<Object> everythingArrayList = new ArrayList<>();
+
+  public static ArrayList<Identifier> identifiersArrayList = new ArrayList<>();
+  public static ArrayList<Constant> constantsArrayList = new ArrayList<>();
+  public static ArrayList<Keywords> keywordsArrayList = new ArrayList<>();
+  public static ArrayList<Operators> operatorsArrayList = new ArrayList<>();
+  public static ArrayList<Relationals> relationalsArrayList = new ArrayList<>();
+  public static ArrayList<Delimiters> delimitersArrayList = new ArrayList<>();
+  public static ArrayList<Illegal> illegalsArrayList = new ArrayList<>();
 
   static HashMap<String, String> keywords = new HashMap<String, String>() {
     {
@@ -68,69 +81,136 @@ public class Lexer {
     return keywords.get(word);
   }
 
-  public static String[] MatchWordArrayType(String[] wordsArray, int lineNumber) {
-    ArrayList<String> categoryArrayList = new ArrayList<>();
-    ArrayList<String> everythingArrayList = new ArrayList<>();
-    ArrayList<Identifier> identifiersArrayList = new ArrayList<>();
-    ArrayList<Constant> constantsArrayList = new ArrayList<>();
-    ArrayList<Keywords> keywordsArrayList = new ArrayList<>();
-    ArrayList<Operators> operatorsArrayList = new ArrayList<>();
-    ArrayList<Relationals> realtionalsArrayList = new ArrayList<>();
-    ArrayList<Delimiters> delimitersArrayList = new ArrayList<>();
-    int columnNumber = 0;
-
+  public static void MatchWordArrayType(String[] wordsArray, int lineNumber) {
     for (String word : wordsArray) {
       String category = Lexer.MatchWordType(word);
+      Object register = new Object();
       switch (category) {
         case KEYWORD:
-          Keywords keyword = new Keywords(word);
-          System.out.println(keyword);
+          Keywords keyword = new Keywords(word, wordNumber++, lineNumber);
+          register = keyword;
+          keywordsArrayList.add(keyword);
           break;
         case OPERATOR:
-          Operators operator = new Operators(word);
-          System.out.println(operator);
+          Operators operator = new Operators(word, wordNumber++, lineNumber);
+          register = operator;
+          operatorsArrayList.add(operator);
           break;
         case RELATIONAL:
-          Relationals relational = new Relationals(word);
-          System.out.println(relational);
+          Relationals relational = new Relationals(word, wordNumber++, lineNumber);
+          register = relational;
+          relationalsArrayList.add(relational);
           break;
         case DELIMITER:
-          Delimiters delimiter = new Delimiters(word);
-          System.out.println(delimiter);
+          Delimiters delimiter = new Delimiters(word, wordNumber++, lineNumber);
+          register = delimiter;
+          delimitersArrayList.add(delimiter);
           break;
         case null:
-          String regex = "^(‘|’|').*(’|'|‘)$";
+          String regex = "^(‘|’|').*(’|'|‘)$|\\d*";
           Pattern pattern = Pattern.compile(regex);
           Matcher matcher = pattern.matcher(word);
           boolean isConstant = matcher.matches();
-          if (!isConstant) {
-            Constant constant = new Constant(word, lineNumber, columnNumber);
-            constantsArrayList.add(constant);
+          if (isConstant) {
+            Constant constant = new Constant(word, wordNumber++, String.valueOf(lineNumber));
+            register = constant;
+            boolean isAlready = containsConstant(constantsArrayList, constant, String.valueOf(lineNumber));
+            if (!isAlready) {
+              constantsArrayList.add(constant);
+            }
           } else {
-            Identifier identifier = new Identifier(word, lineNumber, columnNumber);
-            identifiersArrayList.add(identifier);
+            regex = "[a-zA-Z]*";
+            pattern = Pattern.compile(regex);
+            matcher = pattern.matcher(word);
+            boolean isLegal = matcher.matches();
+            if (isLegal) {
+              String lineNumberString = String.valueOf(lineNumber);
+              Identifier identifier = new Identifier(word, lineNumberString, wordNumber++);
+              boolean isAlready = containsIdentifier(identifiersArrayList, identifier, String.valueOf(lineNumber));
+              register = identifier;
+              if (!isAlready) {
+                identifiersArrayList.add(identifier);
+              }
+            } else {
+              // No sabemos la clasificacion de # por lo que lo marcara como ilegal pero lo
+              // suprimimos porque no aparece en la tabla pero aparece en
+              // los queries (que suponemos que son siempre correctos)
+              if (word.equals("#")) {
+                continue;
+              }
+              Illegal illegal = new Illegal(word, lineNumber);
+              register = illegal;
+              illegalsArrayList.add(illegal);
+            }
           }
           break;
         default:
           break;
       }
-      columnNumber += word.length() + 1;
+      if (register != null) {
+        everythingArrayList.add(register);
+      }
     }
-    HelpersFunctions.printArray(identifiersArrayList.toArray());
-    HelpersFunctions.printArray(constantsArrayList.toArray());
-    return HelpersFunctions.toStringArray(categoryArrayList.toArray());
+
   }
 
-  public static boolean containsIdentifier(ArrayList<Identifier> identifiersArrayList, Object that) {
-    Object[] identifierArray = identifiersArrayList.toArray();
-    boolean containsIdentifier = false;
-    for (Object objectIdentifier : identifierArray) {
-      Identifier identifier = (Identifier) objectIdentifier;
-      if (identifier.equals(that)) {
-        containsIdentifier = true;
+  // refactorizar a que todas las clases tengan un equals y simplemente creamos un
+  // metodo generico que utilice el equals de cada clase y como los object tienen
+  // el metodo equals pues va afuncionar
+  public static boolean containsDelimiter(ArrayList<Delimiters> delimitersArrayList, Delimiters delimiter,
+      int lineNumber) {
+    boolean isAlready = false;
+    for (int i = 0; i < delimitersArrayList.size(); i++) {
+      if (delimitersArrayList.get(i).delimiter.equals(delimiter.delimiter)) {
+        isAlready = true;
         break;
       }
     }
-    return containsIdentifier;
+    return isAlready;
+  }
+
+  public static boolean containsIdentifier(ArrayList<Identifier> identifiersArrayList, Identifier identifier,
+      String lineNumber) {
+    boolean isAlready = false;
+    for (int i = 0; i < identifiersArrayList.size(); i++) {
+      if (identifiersArrayList.get(i).identifier.equals(identifier.identifier)) {
+        identifiersArrayList.get(i).line += ", " + lineNumber;
+        identifier.id = identifiersArrayList.get(i).id;
+        Identifier.serial--;
+        isAlready = true;
+        break;
+      }
+    }
+    return isAlready;
+  }
+
+  public static boolean containsConstant(ArrayList<Constant> constantsArrayList, Constant constant,
+      String lineNumber) {
+    boolean isAlready = false;
+    for (int i = 0; i < constantsArrayList.size(); i++) {
+      if (constantsArrayList.get(i).equals(constant)) {
+        constantsArrayList.get(i).line += lineNumber;
+        constant.id = constantsArrayList.get(i).id;
+        Constant.serial--;
+        isAlready = true;
+        break;
+      }
+    }
+    return isAlready;
+  }
+
+  public static void printAll() {
+    System.out.println("NO | LINEA | TOKEN | TIPO | CODIGO");
+    HelpersFunctions.printArray(everythingArrayList.toArray());
+  }
+
+  public static void printIdentifiers() {
+    System.out.println("Identificador | Valor | Lineas |");
+    identifiersArrayList.forEach(identifier -> System.out.println(identifier.tableFormat()));
+  }
+
+  public static void printConstants() {
+    System.out.println("No | Constante | Tipo | Valor ");
+    constantsArrayList.forEach(constant -> System.out.println(constant.tableFormat()));
   }
 }
