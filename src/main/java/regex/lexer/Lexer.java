@@ -1,9 +1,10 @@
 package regex.lexer;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import regex.helpers.HelpersFunctions;
 import regex.tokens.Identifier;
 import regex.tokens.Constant;
@@ -84,6 +85,18 @@ public class Lexer {
         case DELIMITER:
           break;
         case null:
+          String regex = "^'.*'$";
+
+          Pattern pattern = Pattern.compile(regex);
+
+          Matcher matcher = pattern.matcher(word);
+
+          if (matcher.matches()) {
+            System.out.println("La cadena comienza y termina con una comilla.");
+          } else {
+            System.out.println(word);
+            System.out.println("La cadena no cumple con el patrón especificado.");
+          }
           if (!word.contains("'")) {
             Identifier identifier = new Identifier(word, lineNumber, columnNumber);
             identifiersArrayList.add(identifier);

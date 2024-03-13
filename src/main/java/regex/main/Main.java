@@ -51,13 +51,14 @@ public class Main {
     String regex = "(‘|’|') ?[a-zA-Z@!\\$\\%#\\\\\\(\\)_\\-0-9\\[\\]\\{\\} ?]*(’|'|‘)|\\b\\w+\\b|(,|.)";
 
     String[] textSplitted = txt.split("\n");
+
     for (int i = 0; i < textSplitted.length; i++) {
-      String[] words = GetFiltereWords(regex, textSplitted[i]);
+      String[] words = GetFilteredWords(regex, textSplitted[i]);
       String[] categoriesArray = Lexer.MatchWordArrayType(words, i);
     }
   }
 
-  public static String[] GetFiltereWords(String regex, String text) {
+  public static String[] GetFilteredWords(String regex, String text) {
     Pattern pattern = Pattern.compile(regex);
     Matcher matcher = pattern.matcher(text);
     ArrayList<String> words = new ArrayList<>();
