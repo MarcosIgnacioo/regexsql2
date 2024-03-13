@@ -6,10 +6,10 @@ import java.util.regex.Pattern;
 
 import regex.helpers.HelpersFunctions;
 import regex.lexer.Lexer;
-import regex.tokens.Identifier;
 
 public class Main {
-  public static void main(String[] args) {
+  public static void main(String[] args) throws Exception {
+    // Print the path
     String txt = "SELECT ANOMBRE, CALIFICACION , TURNO\n" +
         "FROM ALUMNOS, INSCRITOS, MATERIAS, CARRERAS\n" +
         "WHERE MNOMBRE=’LENAUT2’ AND TURNO = ‘TM’\n" +
@@ -47,16 +47,13 @@ public class Main {
         "FROM ALUMNOS, INSCRITOS, MATERIAS, CARRERAS\n" +
         "WHERE MNOMBRE=’LENAUT2’ AND TURNO = ‘TM’\n" +
         "AND CNOMBRE=’ISC’ AND SEMESTRE=’%@!$2$#\\()%02-_3?{}[]I’ AND CALIFICACION >= 70\n";
+    // String txt = "SELECT";
     String regex = "(‘|’|') ?[a-zA-Z@!\\$\\%#\\\\\\(\\)_\\-0-9\\[\\]\\{\\} ?]*(’|'|‘)|\\b\\w+\\b|(,|.)";
 
-    String[] words = GetFiltereWords(regex, txt);
-    String[] categoriesArray = Lexer.MatchWordArrayType(words);
-    printArray(categoriesArray);
-  }
-
-  public static void printArray(Object[] array) {
-    for (Object element : array) {
-      System.out.println(element);
+    String[] textSplitted = txt.split("\n");
+    for (int i = 0; i < textSplitted.length; i++) {
+      String[] words = GetFiltereWords(regex, textSplitted[i]);
+      String[] categoriesArray = Lexer.MatchWordArrayType(words, i);
     }
   }
 

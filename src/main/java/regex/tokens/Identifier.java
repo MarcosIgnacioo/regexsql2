@@ -9,7 +9,7 @@ public class Identifier {
   private int column;
 
   public String toString() {
-    return id + " " + identifier + " " + line + "," + column;
+    return "IDENTIFIER " + id + " " + identifier + " " + line + "," + column;
   }
 
   public Identifier(String identifier, int line, int column) {
