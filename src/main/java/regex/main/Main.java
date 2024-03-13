@@ -44,7 +44,7 @@ public class Main {
         "WHERE ANOMBRE='MESSI@ LIONEL'))\n" +
         "\n" +
         "SELECT ANOMBRE, CALIFICACION, TURNO\n" +
-        "FROM ALUMNOS, INSCRITOS, MATERIAS, CARRERAS\n" +
+        "FROM ALUMNOS, ALUMNOS, MATERIAS, CARRERAS\n" +
         "WHERE MNOMBRE=’LENAUT2’ AND TURNO = ‘TM’\n" +
         "AND CNOMBRE=’ISC’ AND SEMESTRE=’%@!$2$#\\()%02-_3?{}[]I’ AND CALIFICACION >= 70\n";
     // String txt = "SELECT";

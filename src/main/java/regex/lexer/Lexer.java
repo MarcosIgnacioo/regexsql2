@@ -2,12 +2,16 @@ package regex.lexer;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.text.BreakIterator;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import regex.helpers.HelpersFunctions;
 import regex.tokens.Identifier;
+import regex.tokens.Keywords;
 import regex.tokens.Constant;
+import regex.tokens.Delimiters;
+import regex.tokens.Operators;
+import regex.tokens.Relationals;
 
 public class Lexer {
   private final static String KEYWORD = "KEYWORD";
@@ -66,43 +70,45 @@ public class Lexer {
 
   public static String[] MatchWordArrayType(String[] wordsArray, int lineNumber) {
     ArrayList<String> categoryArrayList = new ArrayList<>();
+    ArrayList<String> everythingArrayList = new ArrayList<>();
     ArrayList<Identifier> identifiersArrayList = new ArrayList<>();
     ArrayList<Constant> constantsArrayList = new ArrayList<>();
+    ArrayList<Keywords> keywordsArrayList = new ArrayList<>();
+    ArrayList<Operators> operatorsArrayList = new ArrayList<>();
+    ArrayList<Relationals> realtionalsArrayList = new ArrayList<>();
+    ArrayList<Delimiters> delimitersArrayList = new ArrayList<>();
     int columnNumber = 0;
 
     for (String word : wordsArray) {
       String category = Lexer.MatchWordType(word);
       switch (category) {
         case KEYWORD:
+          Keywords keyword = new Keywords(word);
+          System.out.println(keyword);
           break;
-
         case OPERATOR:
+          Operators operator = new Operators(word);
+          System.out.println(operator);
           break;
-
         case RELATIONAL:
+          Relationals relational = new Relationals(word);
+          System.out.println(relational);
           break;
-
         case DELIMITER:
+          Delimiters delimiter = new Delimiters(word);
+          System.out.println(delimiter);
           break;
         case null:
-          String regex = "^'.*'$";
-
+          String regex = "^(‘|’|').*(’|'|‘)$";
           Pattern pattern = Pattern.compile(regex);
-
           Matcher matcher = pattern.matcher(word);
-
-          if (matcher.matches()) {
-            System.out.println("La cadena comienza y termina con una comilla.");
-          } else {
-            System.out.println(word);
-            System.out.println("La cadena no cumple con el patrón especificado.");
-          }
-          if (!word.contains("'")) {
-            Identifier identifier = new Identifier(word, lineNumber, columnNumber);
-            identifiersArrayList.add(identifier);
-          } else {
+          boolean isConstant = matcher.matches();
+          if (!isConstant) {
             Constant constant = new Constant(word, lineNumber, columnNumber);
             constantsArrayList.add(constant);
+          } else {
+            Identifier identifier = new Identifier(word, lineNumber, columnNumber);
+            identifiersArrayList.add(identifier);
           }
           break;
         default:
@@ -113,5 +119,18 @@ public class Lexer {
     HelpersFunctions.printArray(identifiersArrayList.toArray());
     HelpersFunctions.printArray(constantsArrayList.toArray());
     return HelpersFunctions.toStringArray(categoryArrayList.toArray());
+  }
+
+  public static boolean containsIdentifier(ArrayList<Identifier> identifiersArrayList, Object that) {
+    Object[] identifierArray = identifiersArrayList.toArray();
+    boolean containsIdentifier = false;
+    for (Object objectIdentifier : identifierArray) {
+      Identifier identifier = (Identifier) objectIdentifier;
+      if (identifier.equals(that)) {
+        containsIdentifier = true;
+        break;
+      }
+    }
+    return containsIdentifier;
   }
 }
