@@ -1,13 +1,13 @@
 package regex.tokens;
 
-public class Operators {
-  private static int serial = 71;
+public class Operators extends Token {
+  public static int serial = 71;
   private int id = 0;
   public String operator;
   public int number;
   public int tokenType = 7;
   public int line;
-  private int value;
+  public int value;
 
   public String toString() {
     return number + " | " + line + " | " + operator + " | " + tokenType + " | " + value;
@@ -31,6 +31,7 @@ public class Operators {
   }
 
   public Operators(String operator, int number, int line) {
+    super(operator);
     this.id = serial++;
     this.number = number;
     this.operator = operator;

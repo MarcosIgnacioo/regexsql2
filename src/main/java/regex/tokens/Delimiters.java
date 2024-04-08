@@ -1,8 +1,8 @@
 package regex.tokens;
 
-public class Delimiters {
-  private static int serial = 50;
-  private int id = 0;
+public class Delimiters extends Token {
+  public static int serial = 50;
+  public int id = 0;
   public int number;
   public String delimiter;
   public int tokenType = 5;
@@ -37,11 +37,11 @@ public class Delimiters {
   }
 
   public Delimiters(String delimiter, int number, int line) {
+    super(delimiter);
     this.id = serial++;
     this.number = number;
     this.delimiter = delimiter;
     this.line = line;
     setValue(delimiter);
   }
-
 }

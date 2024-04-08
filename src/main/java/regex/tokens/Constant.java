@@ -3,7 +3,7 @@ package regex.tokens;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Constant {
+public class Constant extends Token {
   public static int serial = 600;
   public int id;
   public int number;
@@ -21,6 +21,7 @@ public class Constant {
   }
 
   public Constant(String constants, int number, String line) {
+    super(constants);
     this.id = serial++;
     this.constants = constants;
     this.number = number;

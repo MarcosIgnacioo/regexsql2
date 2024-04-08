@@ -1,12 +1,12 @@
 package regex.tokens;
 
-public class Keywords {
+public class Keywords extends Token {
 
   public String keyword;
 
-  private String symbol;
+  public String symbol;
 
-  private int value;
+  public int value;
 
   public int number;
 
@@ -149,11 +149,11 @@ public class Keywords {
   }
 
   public Keywords(String keyword, int number, int line) {
+    super(keyword);
     this.keyword = keyword;
     this.number = number;
     this.line = line;
     getSymbol(keyword);
     getValue(keyword);
-
   }
 }

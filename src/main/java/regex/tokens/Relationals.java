@@ -1,13 +1,13 @@
 package regex.tokens;
 
-public class Relationals {
-  private static int serial = 81;
+public class Relationals extends Token {
+  public static int serial = 81;
   private int id = 0;
   public String relational;
   public int number;
   public int tokenType = 8;
   public int line;
-  private int value;
+  public int value;
 
   public void setValue(String relational) {
     switch (relational) {
@@ -34,6 +34,7 @@ public class Relationals {
   }
 
   public Relationals(String relational, int number, int line) {
+    super(relational);
     this.id = serial++;
     this.number = number;
     this.relational = relational;

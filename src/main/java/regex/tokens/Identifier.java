@@ -1,6 +1,6 @@
 package regex.tokens;
 
-public class Identifier {
+public class Identifier extends Token {
 
   public static int serial = 401;
   public int id;
@@ -10,7 +10,17 @@ public class Identifier {
   public int tokenType = 4;
 
   public String toString() {
-    return number + " | " + line.charAt(0) + " | " + " | " + identifier + " | " + tokenType + " | " + id + " | ";
+    return number
+        + " | "
+        + line.charAt(0)
+        + " | "
+        + " | "
+        + identifier
+        + " | "
+        + tokenType
+        + " | "
+        + id
+        + " | ";
   }
 
   public String tableFormat() {
@@ -18,6 +28,7 @@ public class Identifier {
   }
 
   public Identifier(String identifier, String line, int number) {
+    super(identifier);
     this.id = serial++;
     this.identifier = identifier;
     this.number = number;
@@ -26,8 +37,7 @@ public class Identifier {
 
   @Override
   public boolean equals(Object o) {
-    if (o == null || getClass() != o.getClass())
-      return false;
+    if (o == null || getClass() != o.getClass()) return false;
     Identifier that = (Identifier) o;
     return that.identifier == this.identifier;
   }

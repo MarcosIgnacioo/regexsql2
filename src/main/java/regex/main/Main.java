@@ -3,15 +3,17 @@ package regex.main;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import regex.helpers.HelpersFunctions;
 import regex.lexer.Lexer;
+import regex.parser.Parser;
+import regex.tokens.Token;
 
 public class Main {
   public static void main(String[] args) throws Exception {
     String txt = HelpersFunctions.queries[0];
-    String regex = "(‘|’|') ?[a-zA-Z@!\\$\\%#\\\\\\(\\)_\\-0-9\\[\\]\\{\\}?]*(’|'|‘)|>=|<=|[a-zA-Z0-9\\$@#!\\-\\*]+|(,|.)";
-
+    String regex =
+        "(‘|’|')"
+            + " ?[a-zA-Z@!\\$\\%#\\\\\\(\\)_\\-0-9\\[\\]\\{\\}?]*(’|'|‘)|>=|<=|[a-zA-Z0-9\\$@#!\\-\\*]+|(,|.)";
     String[] textSplitted = txt.split("\n");
 
     Lexer lexedText = new Lexer();
@@ -19,9 +21,8 @@ public class Main {
       String[] words = GetFilteredWords(regex, textSplitted[i]);
       lexedText.MatchWordArrayType(words, i + 1);
     }
-    lexedText.printAll();
-    lexedText.printIdentifiers();
-    lexedText.printConstants();
+    ArrayList<Token> all = lexedText.everythingArrayList;
+    Parser p = new Parser(all);
   }
 
   public static String[] GetFilteredWords(String regex, String text) {
