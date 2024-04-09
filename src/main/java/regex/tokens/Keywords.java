@@ -149,7 +149,7 @@ public class Keywords extends Token {
   }
 
   public Keywords(String keyword, int number, int line) {
-    super(keyword);
+    super(keyword, String.valueOf(line));
     this.keyword = keyword;
     this.number = number;
     this.line = line;

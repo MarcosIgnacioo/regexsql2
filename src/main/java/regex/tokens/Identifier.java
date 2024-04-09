@@ -28,7 +28,7 @@ public class Identifier extends Token {
   }
 
   public Identifier(String identifier, String line, int number) {
-    super(identifier);
+    super(identifier, line);
     this.id = serial++;
     this.identifier = identifier;
     this.number = number;

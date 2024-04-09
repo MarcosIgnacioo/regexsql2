@@ -5,8 +5,8 @@ public class HelpersFunctions {
     "SELECT ANOMBRE, CALIFICACION, TURNO\n"
         + "FROM ALUMNOS, INSCRITOS, MATERIAS, CARRERAS\n"
         + "WHERE MNOMBRE=’LENAUT2’ AND TURNO = ‘TM’ \n"
-        + "AND CNOMBRE=’ISC’ AND SEMESTRE=’2023I’ AND CALIFICACION >= 70",
-    "SELECT *\n" + "FROM PROFESORES\n" + "WHERE EDAD >45 AND GRADO='MAE' OR GRADO='DOC'",
+        + "AND CNOMBRE=’ISC’ AND SEMESTRE=’2023I’ AND CALIFICACION >= 70", // q1 ./
+    "SELECT *\n" + "FROM PROFESORES\n" + "WHERE EDAD >45 AND GRADO='MAE' OR GRADO='DOC'", // q2 ./
     "SELECT ANOMBRE\n"
         + "FROM ALUMNOS , INSCRITOS\n"
         + "WHERE ALUMNOS.A#=INSCRITOS.A# AND INSCRITOS.SEMESTRE='2010I'",
@@ -50,8 +50,8 @@ public class HelpersFunctions {
         + "AND C# IN (SELECT C#\n"
         + "FROM CARRERAS\n"
         + "WHERE CNOMBRE='ISC')",
-    "SELECT ANOMBRE\n"
-        + "FROM ALUMNOS\n"
+    "SELECT ANOMBRE \n"
+        + "FROM ALUMNOS \n"
         + "WHERE A# IN (SELECT A#\n"
         + "FROM INSCRITOS\n"
         + "WHERE CALIFICACION < 70\n"

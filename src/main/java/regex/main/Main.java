@@ -5,24 +5,29 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import regex.helpers.HelpersFunctions;
 import regex.lexer.Lexer;
-import regex.parser.Parser;
-import regex.tokens.Token;
+import regex.parser.*;
 
 public class Main {
   public static void main(String[] args) throws Exception {
-    String txt = HelpersFunctions.queries[0];
-    String regex =
-        "(‘|’|')"
-            + " ?[a-zA-Z@!\\$\\%#\\\\\\(\\)_\\-0-9\\[\\]\\{\\}?]*(’|'|‘)|>=|<=|[a-zA-Z0-9\\$@#!\\-\\*]+|(,|.)";
-    String[] textSplitted = txt.split("\n");
+    for (int j = 0; j < HelpersFunctions.queries.length; j++) {
+      String regex =
+          "(‘|’|') ?[a-zA-Z@!\\$\\%#\\\\\\(\\)_\\-0-9\\[\\]\\{\\}?"
+              + " ]*(’|'|‘)|>=|<=|[a-zA-Z0-9\\$@#!\\-\\*]+|(,|.)";
+      String txt = HelpersFunctions.queries[j];
+      String[] textSplitted = txt.split("\n");
 
-    Lexer lexedText = new Lexer();
-    for (int i = 0; i < textSplitted.length; i++) {
-      String[] words = GetFilteredWords(regex, textSplitted[i]);
-      lexedText.MatchWordArrayType(words, i + 1);
+      Lexer lexedText = new Lexer();
+      for (int i = 0; i < textSplitted.length; i++) {
+        String[] words = GetFilteredWords(regex, textSplitted[i]);
+        lexedText.MatchWordArrayType(words, i + 1);
+      }
+      System.out.println();
+      System.out.println("QUERY NO: " + (j + 1));
+      // ArrayList<Token> all = lexedText.everythingArrayList;
+      // System.out.println(txt);
+      Parser p = new Parser(lexedText.everythingArrayList, j + 1);
+      // System.out.println("------------------------");
     }
-    ArrayList<Token> all = lexedText.everythingArrayList;
-    Parser p = new Parser(all);
   }
 
   public static String[] GetFilteredWords(String regex, String text) {

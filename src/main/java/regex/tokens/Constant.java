@@ -21,7 +21,7 @@ public class Constant extends Token {
   }
 
   public Constant(String constants, int number, String line) {
-    super(constants);
+    super(constants, line);
     this.id = serial++;
     this.constants = constants;
     this.number = number;

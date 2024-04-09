@@ -34,7 +34,7 @@ public class Relationals extends Token {
   }
 
   public Relationals(String relational, int number, int line) {
-    super(relational);
+    super(relational, String.valueOf(line));
     this.id = serial++;
     this.number = number;
     this.relational = relational;

@@ -6,7 +6,7 @@ public class Illegal extends Token {
   public int value;
 
   public Illegal(String word, int line) {
-    super(word);
+    super(word, String.valueOf(line));
     this.word = word;
     this.line = line;
     this.value = 999;

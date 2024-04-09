@@ -12,7 +12,7 @@ public class Parser {
   static HashMap<Integer, ArrayList<Integer>> columnRules = new HashMap<>();
 
   public ArrayList<Token> tokensArrayList = new ArrayList<>();
-  public static int position = 0;
+  public int position = 0;
   public Token currentToken;
   public Token nextToken;
 
@@ -20,37 +20,87 @@ public class Parser {
     fillTable();
     this.tokensArrayList = tokensArrayList;
     Stack<Integer> rulesStack = new Stack<>();
-    startGamer2(rulesStack);
+    startGamer2(rulesStack, 0);
+    // readFullToken();
   }
 
-  public Stack<Integer> startGamer2(Stack<Integer> stack) {
-    // for (Token var : tokensArrayList) {
-    //   System.out.println("tok: " + var.tokenValue + " word: " + var.tokenParser);
-    //   System.out.println();
-    // }
+  public Parser(ArrayList<Token> tokensArrayList, int query) {
+    fillTable();
+    this.tokensArrayList = tokensArrayList;
+    Stack<Integer> rulesStack = new Stack<>();
+    startGamer2(rulesStack, query);
+    // readFullToken();
+  }
+
+  public void readFullToken() {
+    readNextToken();
+    while (currentToken != null) {
+      System.out.println(currentToken.tokenParser);
+      readNextToken();
+    }
+    System.out.println(position);
+    System.out.println(currentToken);
+  }
+
+  public Stack<Integer> startGamer2(Stack<Integer> stack, int query) {
     stack.push(199);
     stack.push(300);
     readNextToken();
     Integer stackState = null;
     do {
-      System.out.println("+++++++++");
-      System.out.println("stack");
-      System.out.println("+++++++++");
-      stack.forEach(System.out::println);
-      System.out.println("+++++++++");
+      // System.out.println("");
+      // System.out.println("CURRENT TOKEN: " + currentToken.tokenParser);
+      // System.out.println("+++");
+      // System.out.println("stack");
+      // System.out.println("+++");
+      // stack.forEach(System.out::println);
       stackState = stack.pop();
       int k = this.currentToken.tokenValue;
-      System.out.println("-----------------------------");
-      System.out.println("TOKEN: ");
-      System.out.println("       " + currentToken.tokenParser);
-      System.out.println("VALUE: ");
-      System.out.println("       " + currentToken.tokenValue);
-      System.out.println("CURRENTRULE: ");
-      System.out.println("       " + stackState);
+      // if ((currentToken.tokenValue == 199 && stackState != 199)
+      //     || (currentToken.tokenValue != 199 && stackState == 199)) {
+      //   System.out.println("ERROR");
+      //   break;
+      // }
+      // System.out.println("");
+      // System.out.println("StackSTATE");
+      // System.out.println("");
+      // stack.forEach(
+      //     s -> {
+      //       System.out.println("===");
+      //       System.out.println(s);
+      //     });
+      // System.out.println("===");
+      // System.out.println("");
+      final Object[][] table = new String[5][];
+      table[0] = new String[] {"TOKEN", "|", "VALUE"};
+      table[1] =
+          new String[] {
+            "------------------------------", "----------------------------", "",
+          };
+      table[2] =
+          new String[] {String.valueOf(currentToken.tokenValue), "|", currentToken.tokenParser};
+      table[3] =
+          new String[] {
+            "------------------------------", "----------------------------", "",
+          };
+      table[4] = new String[] {String.valueOf("CURRENT RULE"), "|", String.valueOf(stackState)};
+      // for (final Object[] row : table) {
+      //   System.out.format("%15s%15s%15s%n", row);
+      // }
 
       if (stackState < 300 || stackState == 199) {
         if (stackState == k) {
           readNextToken();
+        } else {
+          System.out.println(
+              "ERROR EN LINEA: "
+                  + currentToken.line
+                  + " SE ESPERABA "
+                  + stackState
+                  + " SE RECIBIO "
+                  + currentToken.tokenParser);
+          System.out.println(currentToken.tokenValue);
+          System.out.println(stackState);
         }
       } else {
         if (syntaxTable.get(stackState).get(k) != null) {
@@ -58,9 +108,11 @@ public class Parser {
 
           if (rulesInCurrentInstruction != null && !checkIfFinal(rulesInCurrentInstruction)) {
             addToStackInReverse(stack, rulesInCurrentInstruction);
-          } else {
           }
         } else {
+          System.out.println("ERROR EN LINEA: " + currentToken.line);
+          System.out.println("SE ESPERABAN LAS SIGUIENTES REGLAS");
+          stack.forEach(System.out::println);
         }
       }
     } while (stackState != 199);
@@ -145,6 +197,8 @@ public class Parser {
         readNextToken();
       }
     } while (stackState != 199);
+    System.out.println("wdasf");
+    tokensArrayList.forEach(System.out::println);
     return stack;
   }
 
@@ -153,12 +207,21 @@ public class Parser {
   // + 1 es mayor al tama;o de la arraylist) retorna null, que en este contexto lo contaremos como
   // nuestro $ (Final del query)
   public void readNextToken() {
-    if (position + 1 >= tokensArrayList.size()) {
-      this.currentToken = null;
+    if (position == tokensArrayList.size() - 1) {
+      this.currentToken = tokensArrayList.get(position++);
       this.nextToken = null;
+      return;
+    }
+    if (position + 1 >= tokensArrayList.size()) {
+      Token lastToken = new Token("$", "");
+      lastToken.tokenValue = 199;
+      this.currentToken = lastToken;
+      this.nextToken = null;
+      return;
     } else {
       this.currentToken = tokensArrayList.get(position++);
       this.nextToken = tokensArrayList.get(position);
+      return;
     }
   }
 
@@ -363,6 +426,7 @@ public class Parser {
           {
             put(4, new Integer[] {304});
             put(54, new Integer[] {54, 318, 54});
+            put(62, new Integer[] {318});
             put(61, new Integer[] {319});
           }
         });

@@ -126,7 +126,7 @@ public class Lexer {
               constantsArrayList.add(constant);
             }
           } else {
-            regex = "[a-zA-Z]*";
+            regex = "[a-zA-Z#]*";
             pattern = Pattern.compile(regex);
             matcher = pattern.matcher(word);
             boolean isLegal = matcher.matches();

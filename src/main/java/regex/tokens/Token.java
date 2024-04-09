@@ -5,6 +5,7 @@ import java.util.HashMap;
 public class Token {
   public String tokenParser;
   public int tokenValue;
+  public String line;
   public HashMap<String, Integer> keywordCode =
       new HashMap<String, Integer>() {
         {
@@ -46,8 +47,9 @@ public class Token {
       };
   ;
 
-  public Token(String tokenParser) {
+  public Token(String tokenParser, String line) {
     this.tokenParser = tokenParser;
+    this.line = line;
   }
 
   public Token() {}
@@ -168,6 +170,9 @@ public class Token {
         break;
       case "ERROR ILEGAL":
         tokenValue = 999;
+        break;
+      case "$":
+        tokenValue = 199;
         break;
       case "":
         tokenValue = 1000;

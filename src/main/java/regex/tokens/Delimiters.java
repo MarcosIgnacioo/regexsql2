@@ -30,6 +30,12 @@ public class Delimiters extends Token {
       case "‘":
         value = 54;
         break;
+      case "'":
+        value = 55;
+        break;
+      case "\"":
+        value = 54;
+        break;
       default:
         value = 55;
         break;
@@ -37,7 +43,7 @@ public class Delimiters extends Token {
   }
 
   public Delimiters(String delimiter, int number, int line) {
-    super(delimiter);
+    super(delimiter, String.valueOf(line));
     this.id = serial++;
     this.number = number;
     this.delimiter = delimiter;

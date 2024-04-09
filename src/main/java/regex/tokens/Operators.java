@@ -16,22 +16,22 @@ public class Operators extends Token {
   public void setValue(String operator) {
     switch (operator) {
       case "+":
-        value = 83;
+        value = 70;
         break;
       case "-":
-        value = 82;
+        value = 71;
         break;
       case "*":
-        value = 80;
+        value = 72;
         break;
       case "/":
-        value = 81;
+        value = 73;
         break;
     }
   }
 
   public Operators(String operator, int number, int line) {
-    super(operator);
+    super(operator, String.valueOf(line));
     this.id = serial++;
     this.number = number;
     this.operator = operator;
