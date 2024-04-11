@@ -2,12 +2,15 @@ package regex.parser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.Stack;
 import regex.tokens.*;
 
 public class Parser {
   static int[][] tableColumnRowRules = new int[16][1];
   static HashMap<Integer, HashMap<Integer, Integer[]>> syntaxTable = new HashMap<>();
+
+  static HashMap<Integer, String> keywordsCodes = new HashMap<>();
 
   static HashMap<Integer, ArrayList<Integer>> columnRules = new HashMap<>();
 
@@ -16,20 +19,11 @@ public class Parser {
   public Token currentToken;
   public Token nextToken;
 
-  public Parser(ArrayList<Token> tokensArrayList) {
-    fillTable();
-    this.tokensArrayList = tokensArrayList;
-    Stack<Integer> rulesStack = new Stack<>();
-    startGamer2(rulesStack, 0);
-    // readFullToken();
-  }
-
   public Parser(ArrayList<Token> tokensArrayList, int query) {
     fillTable();
     this.tokensArrayList = tokensArrayList;
     Stack<Integer> rulesStack = new Stack<>();
-    startGamer2(rulesStack, query);
-    // readFullToken();
+    begin(rulesStack, query);
   }
 
   public void readFullToken() {
@@ -42,52 +36,14 @@ public class Parser {
     System.out.println(currentToken);
   }
 
-  public Stack<Integer> startGamer2(Stack<Integer> stack, int query) {
+  public Stack<Integer> begin(Stack<Integer> stack, int query) {
     stack.push(199);
     stack.push(300);
     readNextToken();
     Integer stackState = null;
     do {
-      // System.out.println("");
-      // System.out.println("CURRENT TOKEN: " + currentToken.tokenParser);
-      // System.out.println("+++");
-      // System.out.println("stack");
-      // System.out.println("+++");
-      // stack.forEach(System.out::println);
       stackState = stack.pop();
       int k = this.currentToken.tokenValue;
-      // if ((currentToken.tokenValue == 199 && stackState != 199)
-      //     || (currentToken.tokenValue != 199 && stackState == 199)) {
-      //   System.out.println("ERROR");
-      //   break;
-      // }
-      // System.out.println("");
-      // System.out.println("StackSTATE");
-      // System.out.println("");
-      // stack.forEach(
-      //     s -> {
-      //       System.out.println("===");
-      //       System.out.println(s);
-      //     });
-      // System.out.println("===");
-      // System.out.println("");
-      final Object[][] table = new String[5][];
-      table[0] = new String[] {"TOKEN", "|", "VALUE"};
-      table[1] =
-          new String[] {
-            "------------------------------", "----------------------------", "",
-          };
-      table[2] =
-          new String[] {String.valueOf(currentToken.tokenValue), "|", currentToken.tokenParser};
-      table[3] =
-          new String[] {
-            "------------------------------", "----------------------------", "",
-          };
-      table[4] = new String[] {String.valueOf("CURRENT RULE"), "|", String.valueOf(stackState)};
-      // for (final Object[] row : table) {
-      //   System.out.format("%15s%15s%15s%n", row);
-      // }
-
       if (stackState < 300 || stackState == 199) {
         if (stackState == k) {
           readNextToken();
@@ -96,110 +52,45 @@ public class Parser {
               "ERROR EN LINEA: "
                   + currentToken.line
                   + " SE ESPERABA "
-                  + stackState
+                  + keywordsCodes.get(stackState)
                   + " SE RECIBIO "
                   + currentToken.tokenParser);
           System.out.println(currentToken.tokenValue);
           System.out.println(stackState);
+          break;
         }
       } else {
+        // Si la celda es vacia
         if (syntaxTable.get(stackState).get(k) != null) {
           Integer[] rulesInCurrentInstruction = syntaxTable.get(stackState).get(k);
-
+          // Checa si alguna de las reglas no es 99
           if (rulesInCurrentInstruction != null && !checkIfFinal(rulesInCurrentInstruction)) {
             addToStackInReverse(stack, rulesInCurrentInstruction);
           }
         } else {
+          // Celda vacia signfica error
           System.out.println("ERROR EN LINEA: " + currentToken.line);
-          System.out.println("SE ESPERABAN LAS SIGUIENTES REGLAS");
-          stack.forEach(System.out::println);
+          System.out.println("PALABRA O CARACTER ORIGEN DEL ERROR: " + currentToken.tokenParser);
+          Set<Integer> expectedTokens = syntaxTable.get(stackState).keySet();
+          System.out.println("ESTOS SON LOS CARACTERES QUE SE PUEDE ESPERAR QUE SI APAREZCAN AHI");
+          System.out.println(getErrors(expectedTokens));
+          break;
         }
       }
     } while (stackState != 199);
     return stack;
   }
 
-  public Stack<Integer> startGamer(Stack<Integer> stack) {
-    stack.add(199);
-    stack.add(300);
-    readNextToken();
-    Integer currentRule = stack.pop();
-    while (currentRule != 199) {
-      System.out.println(currentRule);
-      HashMap<Integer, Integer[]> rulesRow = syntaxTable.get(currentRule);
-      int tokenValue = currentToken.tokenValue;
-
-      if (rulesRow != null) {
-        Integer[] rules = rulesRow.get(tokenValue);
-        if (rules != null) {
-          addToStackInReverse(stack, rulesRow.get(tokenValue));
-        }
+  public String getErrors(Set<Integer> expectedTokens) {
+    String errorLog = "[";
+    for (int i = 0; i < expectedTokens.size(); i++) {
+      String match = matchRule((int) expectedTokens.toArray()[i]);
+      String isFinal = i != expectedTokens.size() - 1 ? ", " : "";
+      if (match != null) {
+        errorLog += "`" + match + "`" + isFinal;
       }
-      if (currentRule >= 300) {
-        readNextToken();
-      }
-      currentRule = stack.pop();
     }
-
-    // do {
-    //
-    //   System.out.println("PREV RULE: " + currentRule);
-    //   currentRule = stack.pop();
-    //   System.out.println("CURR RULE: " + currentRule);
-    //   int tokenValue = currentToken.tokenValue;
-    //   HashMap<Integer, Integer[]> rulesRow = syntaxTable.get(currentRule);
-    //   if (rulesRow != null) {
-    //     if (rulesRow.get(tokenValue) != null) {
-    //       addToStackInReverse(stack, rulesRow.get(tokenValue));
-    //     }
-    //   }
-    //   readNextToken();
-    // } while (currentRule != 199);
-    System.out.println("STopped");
-    return null;
-  }
-
-  public Stack<Integer> start(Stack<Integer> stack) {
-    readNextToken();
-    stack.add(199); // Se agrega el valor de $
-    stack.add(300); // La instruccion de Query
-    Integer stackState = null;
-    do {
-      System.out.println("STACK");
-      stack.forEach(
-          s -> {
-            System.out.println("    ------");
-            System.out.println("    |" + s);
-            System.out.println("    |" + matchRule(s));
-          });
-      System.out.println("    ------");
-      System.out.println("STACK STATE ANTES: " + stackState);
-      stackState = stack.pop();
-      int k = currentToken.tokenValue;
-      System.out.println("STACK STATE DESPUES: " + stackState);
-      System.out.println("TOKEN VALUE: " + currentToken.tokenParser);
-      System.out.println("========================");
-      if (stackState >= 300) {
-        Integer[] rules = syntaxTable.get(stackState).get(currentToken.tokenValue);
-        if (rules != null) {
-          System.out.println("RULES BEING ADDED: ");
-          for (Integer var : rules) {
-            System.out.println("     " + var);
-          }
-          addToStackInReverse(stack, rules);
-        } else {
-          // System.out.println("No hay ya reglas para esta coordenada");
-        }
-      } else {
-        if (stackState == 99) {
-          System.out.println("whasta");
-        }
-        readNextToken();
-      }
-    } while (stackState != 199);
-    System.out.println("wdasf");
-    tokensArrayList.forEach(System.out::println);
-    return stack;
+    return errorLog + "]";
   }
 
   // Lee el siguiente token que hay en la arraylist; Actualizar nuestro token actual (currentToken)
@@ -228,7 +119,7 @@ public class Parser {
   public String matchRule(int code) {
     switch (code) {
       case 300:
-        return "s A f F J";
+        return "LA SENTENCIA NO CUENTA CON SELECT";
       case 301:
         return "B | *";
       case 302:
@@ -270,7 +161,7 @@ public class Parser {
       default:
         break;
     }
-    return "No rule para esto";
+    return keywordsCodes.get(code);
   }
 
   // Funcion que sirve para llenar el hashmap de las Reglas
@@ -455,6 +346,50 @@ public class Parser {
             put(61, new Integer[] {61});
           }
         });
+
+    // ctrl-v g-ctrl-a
+    keywordsCodes.put(4, "IDENTIFICADOR");
+    keywordsCodes.put(10, "SELECT");
+    keywordsCodes.put(11, "FROM");
+    keywordsCodes.put(12, "WHERE");
+    keywordsCodes.put(13, "IN");
+    keywordsCodes.put(14, "AND");
+    keywordsCodes.put(15, "OR");
+    keywordsCodes.put(16, "CREATE");
+    keywordsCodes.put(17, "TABLE");
+    keywordsCodes.put(18, "CHAR");
+    keywordsCodes.put(19, "NUMERIC");
+    keywordsCodes.put(20, "NOT");
+    keywordsCodes.put(21, "NULL");
+    keywordsCodes.put(22, "CONSTRAINT");
+    keywordsCodes.put(23, "KEY");
+    keywordsCodes.put(24, "PRIMARY");
+    keywordsCodes.put(25, "FOREIGN");
+    keywordsCodes.put(26, "REFERENCES");
+    keywordsCodes.put(27, "INSERT");
+    keywordsCodes.put(28, "INTO");
+    keywordsCodes.put(29, "VALUES");
+
+    keywordsCodes.put(50, ",");
+    keywordsCodes.put(51, ".");
+    keywordsCodes.put(52, "( o )");
+    keywordsCodes.put(53, "( o )");
+    keywordsCodes.put(54, "‘");
+    keywordsCodes.put(55, "'");
+
+    keywordsCodes.put(61, "CONSTANTE (NUMERICA)");
+    keywordsCodes.put(62, "CONSTANTE (ALFANUMERICA)");
+
+    keywordsCodes.put(70, "+");
+    keywordsCodes.put(71, "-");
+    keywordsCodes.put(72, "*");
+    keywordsCodes.put(73, "/");
+
+    keywordsCodes.put(81, ">");
+    keywordsCodes.put(82, "<");
+    keywordsCodes.put(83, "=");
+    keywordsCodes.put(84, ">=");
+    keywordsCodes.put(85, "<=");
   }
 
   public boolean isUpperCase(String text) {

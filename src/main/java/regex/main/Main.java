@@ -9,11 +9,11 @@ import regex.parser.*;
 
 public class Main {
   public static void main(String[] args) throws Exception {
-    for (int j = 0; j < HelpersFunctions.queries.length; j++) {
+    for (int j = 0; j < HelpersFunctions.queriesError.length; j++) {
       String regex =
           "(‘|’|') ?[a-zA-Z@!\\$\\%#\\\\\\(\\)_\\-0-9\\[\\]\\{\\}?"
               + " ]*(’|'|‘)|>=|<=|[a-zA-Z0-9\\$@#!\\-\\*]+|(,|.)";
-      String txt = HelpersFunctions.queries[j];
+      String txt = HelpersFunctions.queriesError[j];
       String[] textSplitted = txt.split("\n");
 
       Lexer lexedText = new Lexer();
@@ -21,10 +21,11 @@ public class Main {
         String[] words = GetFilteredWords(regex, textSplitted[i]);
         lexedText.MatchWordArrayType(words, i + 1);
       }
-      System.out.println();
+      System.out.println("");
       System.out.println("QUERY NO: " + (j + 1));
       // ArrayList<Token> all = lexedText.everythingArrayList;
-      // System.out.println(txt);
+      System.out.println("");
+      System.out.println(txt);
       Parser p = new Parser(lexedText.everythingArrayList, j + 1);
       // System.out.println("------------------------");
     }

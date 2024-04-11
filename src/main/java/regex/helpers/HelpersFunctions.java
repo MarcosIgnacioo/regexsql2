@@ -1,7 +1,61 @@
 package regex.helpers;
 
 public class HelpersFunctions {
+
+  public static String[] queriesError = {
+    "SELECT ANOMBRE\n"
+        + "FROM ALUMNOS;INSCRITOS,CARRERAS\n"
+        + "WHERE ALUMNOS.A#=INSCRITOS.A# AND ALUMNOS.C#=CARRERAS.C#\n"
+        + "AND INSCRITOS.SEMESTRE='2010I'\n"
+        + "AND CARRERAS.CNOMBRE='ISC'\n"
+        + "AND ALUMNOS.GENERACION='2010'\n",
+    "SELECT *\n" + "FROM PROFESORES\n" + "WHERE EDAD >45 AND GRADO=MAE' OR GRADO='DOC'\n",
+    "SELECT ANOMBRE\n"
+        + "FROM ALUMNOS,INSCRITOS,\n"
+        + "WHERE ALUMNOS.A#=INSCRITOS.A# AND\n"
+        + "INSCRITOS.SEMESTRE='2010I'\n",
+    "SELECT ANOMBRE\n"
+        + "FROM ALUMNOS\n"
+        + "WHERE A# IN(SELECT A#\n"
+        + "FROM INSCRITOS\n"
+        + "WHERE P# IN (SELECT P#\n"
+        + "FROM PROFESORES\n"
+        + "WHERE GRADO='MAE'))\n"
+        + "AND C# IN (SELECT C#\n"
+        + "FROM\n"
+        + "WHERE CNOMBRE='ISC')\n",
+    "SELECT ANOMBRE\n"
+        + "FROM ALUMNOS A,INSCRITOS I,CARRERAS C\n"
+        + "WHERE A.A#=I.A# AND A.C#=C.C#\n"
+        + "AND I.SEMESTRE='2010I' C.CNOMBRE='ITC'\n",
+    "SELECT A#,ANOMBRE\n"
+        + "FROM ALUMNOS\n"
+        + "WHERE C# IN (SELECT C#\n"
+        + "FROM CARRERAS\n"
+        + "WHERE SEMESTRES=9)\n"
+        + "AND A# (SELECT A#\n"
+        + "FROM INSCRITOS\n"
+        + "WHERE SEMESTRE='2010I')\n",
+    "SELECT ANOMBRE\n"
+        + "FROM ALUMNOS,INSCRITOS,CARRERAS\n"
+        + "WHERE ALUMNOS.A#=INSCRITOS.A# AND ALUMNOS.C#=CARRERAS.C#\n"
+        + "AND INSCRITOS.SEMESTRE='2010I'\n"
+        + "AND CARRERAS.CNOMBRE='ISC\n"
+        + "AND ALUMNOS.GENERACION='2010'\n",
+    "SELECT ANOMBRE\n"
+        + "FROM ALUMNOS,INSCRITOS,CARRERAS\n"
+        + "WHERE ALUMNOS.A#=INSCRITOS.A# AND ALUMNOS.C#=CARRERAS.C#\n"
+        + "AND INSCRITOS.SEMESTRE '2010I'\n"
+        + "AND CARRERAS.CNOMBRE='ISC'\n"
+        + "AND ALUMNOS.GENERACION='2010'\n",
+  };
   public static String[] queries = {
+    "SELECT ANOMBRE"
+        + "FROM ALUMNOS,INSCRITOS,CARRERAS"
+        + "WHERE ALUMNOS.A#=INSCRITOS.A# AND ALUMNOS.C#=CARRERAS.C#\n"
+        + "AND INSCRITOS.SEMESTRE='2010I'\n"
+        + "AND CARRERAS.CNOMBRE='ISC'\n"
+        + "AND ALUMNOS.GENERACION='2010'",
     "SELECT ANOMBRE, CALIFICACION, TURNO\n"
         + "FROM ALUMNOS, INSCRITOS, MATERIAS, CARRERAS\n"
         + "WHERE MNOMBRE=’LENAUT2’ AND TURNO = ‘TM’ \n"
