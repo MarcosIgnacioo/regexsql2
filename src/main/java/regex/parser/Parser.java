@@ -57,7 +57,6 @@ public class Parser {
                   + currentToken.tokenParser);
           System.out.println(currentToken.tokenValue);
           System.out.println(stackState);
-          break;
         }
       } else {
         // Si la celda es vacia
@@ -69,10 +68,17 @@ public class Parser {
           }
         } else {
           // Celda vacia signfica error
+          System.out.println("===");
+          stack.forEach(System.out::println);
+          System.out.println(stackState);
+          System.out.println("===");
           System.out.println("ERROR EN LINEA: " + currentToken.line);
           System.out.println("PALABRA O CARACTER ORIGEN DEL ERROR: " + currentToken.tokenParser);
           Set<Integer> expectedTokens = syntaxTable.get(stackState).keySet();
-          System.out.println("ESTOS SON LOS CARACTERES QUE SE PUEDE ESPERAR QUE SI APAREZCAN AHI");
+          System.out.println("SE ESPERABA ALGUNO DE LAS SIGUIENTES PALABRAS RESERVADAS O SIMBOLOS");
+          System.out.println("/////////");
+          expectedTokens.forEach(System.out::println);
+          System.out.println("/////////");
           System.out.println(getErrors(expectedTokens));
           break;
         }
@@ -390,6 +396,7 @@ public class Parser {
     keywordsCodes.put(83, "=");
     keywordsCodes.put(84, ">=");
     keywordsCodes.put(85, "<=");
+    keywordsCodes.put(8, "RELACIONAL");
   }
 
   public boolean isUpperCase(String text) {
